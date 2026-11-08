@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Miguel Euraque
+
+name: model-price-submenu
+label: Model Price Submenu
+version: "0.3.0"
+manifest_version: 2
+api_version: 1
+description: "Moves each model's price off the catalog row and into its hover submenu, below the reasoning level"
+author: Miguel Euraque (@mykeura)
+license: MIT
+tags: [desktop, models, appearance]
+requires_hermes: ">=0.21.3"

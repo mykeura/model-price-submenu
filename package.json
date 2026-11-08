@@ -1,0 +1,13 @@
+{
+  "name": "model-price-submenu",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Moves each model's price off the catalog row and into its hover submenu, below the reasoning level.",
+  "scripts": {
+    "check": "node --check desktop/plugin.js",
+    "test": "node tests/plugin.test.mjs"
+  },
+  "author": "Miguel Euraque",
+  "license": "MIT"
+}

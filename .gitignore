@@ -1,0 +1,16 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Node — jsdom is a dev dependency for tests/plugin.test.mjs
+node_modules/
+coverage/
+npm-debug.log*
+*.log
+
+# Local tooling
+.codegraph/
+
+# Secrets and OS noise
+.env
+.DS_Store
