@@ -1,6 +1,6 @@
 # Model Price Submenu
 
-**A cleaner model picker for Hermes Desktop.** Prices on providers like Nous Research crowd every row — the model name ends up squeezed between the rate, the variant tag and the effort chip. This plugin takes the price off the row and puts it where it actually helps: inside the panel that opens when you hover a model, below the reasoning level.
+**A cleaner model picker for Hermes Desktop.** Prices on providers like Nous Research crowd every row — the model name ends up squeezed between the rate, the variant tag and the effort chip. This plugin takes the price off the row and puts it where it actually helps: inside the panel that opens when you hover a model, below the reasoning level. And since that panel already edits the reasoning effort, the composer's separate reasoning pill folds into a small level chip right on the model pill.
 
 - **Readable rows.** Each model shows just its name, variant and setting chips — no `$in/$out` figures fighting for space.
 - **Price one hover away.** Hover any priced model and its panel shows a **PRICE** section under a divider identical to the one above the effort levels, with the same format Hermes uses on the row — input/output per Mtok, cached-read rate, discount tag or "free".
