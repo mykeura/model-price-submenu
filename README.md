@@ -3,8 +3,9 @@
 **A cleaner model picker for Hermes Desktop.** Prices on providers like Nous Research crowd every row — the model name ends up squeezed between the rate, the variant tag and the effort chip. This plugin takes the price off the row and puts it where it actually helps: inside the panel that opens when you hover a model, below the reasoning level.
 
 - **Readable rows.** Each model shows just its name, variant and setting chips — no `$in/$out` figures fighting for space.
-- **Price one hover away.** Hover any priced model and its panel shows a **PRICE** section under a divider identical to the one above the effort levels, with the exact same price string Hermes shows on the row — input/output per Mtok, cached-read rate, discount tag or "free".
-- **Speaks your language.** The PRICE heading follows Hermes' interface language automatically.
+- **Price one hover away.** Hover any priced model and its panel shows a **PRICE** section under a divider identical to the one above the effort levels, with the same format Hermes uses on the row — input/output per Mtok, cached-read rate, discount tag or "free".
+- **Always there.** It works even when Hermes' own "Show model pricing" setting is off, and on usage-window plans where the row shows your plan level instead of a price.
+- **Speaks your language.** The PRICE heading and the price's own text follow Hermes' interface language automatically.
 - **Nothing to configure.** Enable it and it works; disable it and every row goes back to showing its price.
 
 ## Requirements

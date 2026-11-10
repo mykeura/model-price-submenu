@@ -3,7 +3,7 @@
 
 name: model-price-submenu
 label: Model Price Submenu
-version: "0.3.0"
+version: "0.4.0"
 manifest_version: 2
 api_version: 1
 description: "Moves each model's price off the catalog row and into its hover submenu, below the reasoning level"
