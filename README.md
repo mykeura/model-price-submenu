@@ -6,6 +6,7 @@
 - **Price one hover away.** Hover any priced model and its panel shows a **PRICE** section under a divider identical to the one above the effort levels, with the same format Hermes uses on the row — input/output per Mtok, cached-read rate, discount tag or "free".
 - **Always there.** It works even when Hermes' own "Show model pricing" setting is off, and on usage-window plans where the row shows your plan level instead of a price.
 - **Speaks your language.** The PRICE heading and the price's own text follow Hermes' interface language automatically.
+- **One less pill in the composer.** The separate reasoning-level pill next to the model name is hidden — the model pill carries the selected level as a small chip, the same style the model list uses, so the bar where you type stays clear.
 - **Nothing to configure.** Enable it and it works; disable it and every row goes back to showing its price.
 
 ## Requirements

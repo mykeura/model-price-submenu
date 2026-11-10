@@ -55,6 +55,15 @@ const PRICE_SELECTOR = 'span[class~="pl-2"][class~="text-[0.625rem]"]'
 // The contribution area core resolves row decorators from — a standing
 // compatibility promise (model-menu-row-decorations.tsx).
 const ROW_AREA_FALLBACK = 'modelMenu.row'
+// Composer pills: the reasoning selector is its own button next to the model
+// pill — an adjacent sibling in the same controls row (Tip and DropdownMenu
+// both merge props onto the button, so no wrappers sit between them).
+const REASONING_PILL_SELECTOR = 'button[data-testid="reasoning-pill"]'
+const CHIP_ATTR = 'data-model-price-submenu-effort'
+// Badge size="xs" variant="outline" + the uppercase tracking ModelChip adds —
+// the same box the catalog rows use for the effort preset chip.
+const EFFORT_CHIP_CLASS =
+  'inline-flex w-fit shrink-0 items-center gap-1 rounded-[3px] border border-(--ui-stroke-secondary) px-1 py-px font-medium leading-none whitespace-nowrap text-muted-foreground text-[0.6rem] uppercase tracking-wide'
 
 // model.options is already the catalog the open menu just read; refetches
 // stay lazy — at most one in flight, at most one per interval, fresh while
@@ -153,6 +162,14 @@ ${SUB_TRIGGER_SELECTOR}[class~="${MODEL_ROW_CLASS}"] > ${PRICE_SELECTOR} {
    it. Only codicon-check sits as a direct trigger child; the star lives inside
    its button and the submenu caret is codicon-chevron-right. */
 ${SUB_TRIGGER_SELECTOR}[class~="${MODEL_ROW_CLASS}"] > i.codicon-check {
+  display: none !important;
+}
+
+/* The composer's reasoning pill duplicates the submenu every model row
+   already carries — its level shows on the model pill's own chip instead.
+   display:none keeps the button mounted so React keeps resolving the live
+   effort label into it, which the chip mirrors. */
+${REASONING_PILL_SELECTOR} {
   display: none !important;
 }
 `
@@ -482,6 +499,54 @@ export default {
       }
     }
 
+    /** The reasoning pill's level, mirrored onto the model pill as the same
+     *  outlined chip the catalog rows use for an effort preset — one glance
+     *  at the composer says which model runs and at which effort, and the
+     *  hidden pill keeps React updating the source label. Pairs by sibling
+     *  order so every composer surface (primary and tiles) gets its own. */
+    const syncEffortChips = () => {
+      const paired = new Set()
+
+      for (const pill of document.querySelectorAll(REASONING_PILL_SELECTOR)) {
+        const modelPill = pill.previousElementSibling
+        const anchor = modelPill?.querySelector?.(':scope > span.truncate') ?? null
+        let chip = modelPill?.querySelector?.(`[${CHIP_ATTR}]`) ?? null
+
+        if (modelPill instanceof HTMLElement) {
+          paired.add(modelPill)
+        }
+
+        // A pending effort renders a braille GlyphSpinner, not a level —
+        // mirror nothing until a real label lands.
+        const effort = anchor && !pill.querySelector('.glyph-spinner') ? pill.textContent.trim() : ''
+
+        if (!effort) {
+          chip?.remove()
+          continue
+        }
+
+        if (!chip) {
+          chip = document.createElement('span')
+          chip.setAttribute(CHIP_ATTR, '')
+          chip.setAttribute('data-slot', 'badge')
+          chip.className = EFFORT_CHIP_CLASS
+          anchor.after(chip)
+        }
+
+        if (chip.textContent !== effort) {
+          chip.textContent = effort
+        }
+      }
+
+      // Chips left behind by a vanished pair (compact pill, a model with no
+      // reasoning control, a tile that unmounted its composer).
+      for (const chip of document.querySelectorAll(`[${CHIP_ATTR}]`)) {
+        if (!paired.has(chip.parentElement)) {
+          chip.remove()
+        }
+      }
+    }
+
     function sync() {
       if (disposed) {
         return
@@ -508,6 +573,8 @@ export default {
       if (wantsCatalog) {
         ensureCatalog()
       }
+
+      syncEffortChips()
     }
 
     const mutationObserver = new MutationObserver(() => scheduleSync())
@@ -518,6 +585,9 @@ export default {
       mutationObserver.disconnect()
       for (const block of document.querySelectorAll(`[${BLOCK_ATTR}]`)) {
         block.remove()
+      }
+      for (const chip of document.querySelectorAll(`[${CHIP_ATTR}]`)) {
+        chip.remove()
       }
       style.remove()
     })

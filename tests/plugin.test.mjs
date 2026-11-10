@@ -167,6 +167,7 @@ const style = document.querySelector('style[data-plugin="model-price-submenu"]')
 check('style injected', Boolean(style))
 check('css hides row price', style?.textContent.includes('display: none !important') && style.textContent.includes('group/model'))
 check('css hides selected-check icon', style?.textContent.includes('i.codicon-check'))
+check('css hides composer reasoning pill', Boolean(style?.textContent.includes('data-testid="reasoning-pill"')))
 check('row-probe contribution registered', contributions.some(c => c.area === 'modelMenu.row' && typeof c.data?.decorate === 'function'))
 check('no model.options call while clone path suffices', !modelOptionsCalls.length)
 
@@ -315,11 +316,60 @@ const { content: noPriceContent } = makeMenu({ id: 'radix-:rI:', name: 'No Price
 await flush()
 check('provider without pricing untouched', !noPriceContent.querySelector('[data-model-price-submenu]'))
 
+// ── Composer: effort chip on the model pill, reasoning pill hidden ──────────
+// The pills are adjacent siblings (Tip/DropdownMenu merge props, no wrappers).
+const composer = document.createElement('div')
+composer.innerHTML = `
+  <button data-tour="model-pill" data-slot="dropdown-menu-trigger" type="button">
+    <span class="truncate">Hermes 4 70B</span><svg></svg>
+  </button>
+  <button data-testid="reasoning-pill" data-slot="dropdown-menu-trigger" type="button">
+    <span>High</span><svg></svg>
+  </button>`
+document.body.append(composer)
+await flush()
+
+const [modelPill, reasoningPill] = composer.children
+const chip = modelPill.querySelector('[data-model-price-submenu-effort]')
+check('effort chip on the model pill', Boolean(chip))
+check('chip next to the model name', chip?.previousElementSibling?.classList.contains('truncate'))
+check('chip carries the pill level', chip?.textContent === 'High')
+check(
+  'chip styled like a row setting chip',
+  Boolean(
+    chip?.className.includes('border') &&
+      chip.className.includes('text-[0.6rem]') &&
+      chip.className.includes('uppercase') &&
+      chip.getAttribute('data-slot') === 'badge'
+  )
+)
+
+// The hidden pill keeps updating — the chip mirrors the new level.
+reasoningPill.firstElementChild.textContent = 'Ultra→Max'
+await flush()
+check('chip mirrors level changes', modelPill.querySelector('[data-model-price-submenu-effort]')?.textContent === 'Ultra→Max')
+
+// A pending effort renders the GlyphSpinner instead of a level: no chip.
+reasoningPill.innerHTML = '<span class="glyph-spinner">⠋</span>'
+await flush()
+check('no chip while effort is pending', !modelPill.querySelector('[data-model-price-submenu-effort]'))
+
+// Level resolves again — the chip comes back.
+reasoningPill.innerHTML = '<span>Low</span><svg></svg>'
+await flush()
+check('chip returns once effort resolves', modelPill.querySelector('[data-model-price-submenu-effort]')?.textContent === 'Low')
+
+// Reasoning pill unmounts entirely (model without reasoning): the orphan goes.
+reasoningPill.remove()
+await flush()
+check('chip removed when the pill is gone', !modelPill.querySelector('[data-model-price-submenu-effort]'))
+
 // ── Disposal restores the DOM ───────────────────────────────────────────────
 for (const dispose of disposers) {
   dispose()
 }
 check('blocks removed on dispose', !document.querySelector('[data-model-price-submenu]'))
+check('effort chips removed on dispose', !document.querySelector('[data-model-price-submenu-effort]'))
 check('style removed on dispose', !document.querySelector('style[data-plugin="model-price-submenu"]'))
 
 let ok = true
